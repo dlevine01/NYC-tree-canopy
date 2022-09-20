@@ -1,7 +1,6 @@
 # Is the change in tree canopy cover equitable in climate-changing New York City?: Exploring the data
 
 ### Extreme heat is a growing and unequal threat
-
 Though often overlooked, **extreme heat is one of the most dangerous weather conditions facing New York City**. More Americans die each year from [heat waves](https://www.cdc.gov/climateandhealth/pubs/extreme-heat-guidebook.pdf) than all other extreme weather events combined. Climate change is projected to [double](https://nyaspubs.onlinelibrary.wiley.com/doi/full/10.1111/nyas.12653) the number of days over 90 degrees in New York City by the 2050s. 
 
 **The city landscape [absorbs and retains extra heat](https://www.epa.gov/heatislands)**, which exacerbates the effects of high air temperatures. This ‘urban heat island’ effect is most pronounced in areas without shading tree canopy and, instead, pavement and buildings that take in extra heat.
@@ -9,7 +8,6 @@ Though often overlooked, **extreme heat is one of the most dangerous weather con
 **The risks of extreme heat are borne inequitably by New Yorkers.** The physical landscape of the city means areas with less tree cover and more pavement get as much as [30 degrees hotter](https://www.nytimes.com/2021/08/20/nyregion/climate-inequality-nyc.html). Moreover, residents facing economic and other disadvantages are more likely to lack access to air conditioning and to have comorbidities that add to heat stress. 
 
 ### Tree cover is a vital block against extreme heat
-
 **New York City has undertaken a substantial tree-planting campaign** over the past decade to mitigate the harms of climate change (and to offer many more benefits). The public-private ‘MillionTrees NYC’ project launched in 2011 and reached its goal two years ahead of schedule, planting its [millionth tree](https://www.nycgovparks.org/parks/joyce-kilmer-park/dailyplant/23507) in 2015. The program was such a success that there are calls from across the political spectrum for a [new investment](https://www.nytimes.com/2022/02/12/nyregion/trees-parks-nyc.html) in new trees citywide.
 
 At the same time, the past decade has seen **a wave of new construction** in many neighborhoods and this new urban growth may have cut away at tree canopy cover.
@@ -17,6 +15,9 @@ At the same time, the past decade has seen **a wave of new construction** in man
 This analysis explores how change in tree canopy in recent years correlates with the socio-economic factors that determine which areas are most vulnerable to heat stress. Specifically, it explores whether tree canopy change correlates with heat vulnerability and other neighborhood demographic and economic factors. 
 
 ## Data
+
+![LiDAR](report/LiDAR.jpg)
+_LiDAR imagery used to generate tree canopy data. Source: NYC DoITT_
 
 - Tree Canopy Change 2010-2017. This dataset shows the change in tree canopy cover from 2010 to 2017. The information was sourced from LiDAR collected in each year, then processed through classification algorithms to detect tree cover, then further adjusted to better represent the accurate change in canopy (removing artifacts from changes in technology and processing between the two data collection periods). Data are stored as vector polygons classified as ‘gain’, ‘loss,’, or ‘no change’  The data is published by NYC DOITT on [NYC Open Data](https://data.cityofnewyork.us/Environment/Tree-Canopy-Change-2010-2017-/by9k-vhck).
 - Heat Vulnerability Index. This composite measure, compiled by the New York State Department of Health, combines physical data on local temperature risk and social and economic measures to quantify the population’s vulnerability to heat stress. The finest-grain data is available at the Neighborhood Tabulation Area (NTA) scale. The data were compiled in 2018. Time series data have not been computed, which somewhat limits the explanatory power of these data for this study. However, the component parts of the index are available for other time periods, so a further analysis on this topic could compute HVI at different time periods. Data were taken from NYS [Environment & Health Data Portal](https://a816-dohbesp.nyc.gov/IndicatorPublic/VisualizationData.aspx?id=2411,719b87,107,Summarize).
@@ -48,8 +49,7 @@ I used several methods to check for relationships between variables, and to see 
 
 A correlation heatmap showed the degree to which each pair of variables generally trend in the same direction. A grid of scatterplots allowed a scan of which pairs of variables might show a functional relationship; however, few pairs showed any clear patterns (see figure 1)
 
-![80e1bdebfc6a3a309c32d65548e5be39.png](80e1bdebfc6a3a309c32d65548e5be39.png)
-
+![correlation plots](report/80e1bdebfc6a3a309c32d65548e5be39.png)
 _Figure 1: 2-dimensional histogram plots between each pair of variables. Few linear relationships observed._ 
 
 Exploratory regressions, conducted using ArcMap, tested each permutation of explanatory variables. In general, these models showed little fit, with the best only reaching R^2 values of 0.1.
@@ -59,8 +59,7 @@ I tested linear models and plotted data for a few of the pair relationships that
 #### Tests for spatial autocorrelation
 Spatial autocorrelation violates the assumptions that underpin ordinary least squares regression and can cause erroneous results. Using the `esda` package, I tested all variables for spatial autocorrelation, using first-order Queen contiguity as a measure of nearness. I computed Moran’s _I_ and Geary’s _c_ values for each variable, the latter to be sure that outlier variable values were not skewing the I scores. 
 
-![a7afadb9556b61e78f14778393b1c165.png](a7afadb9556b61e78f14778393b1c165.png)
-
+![Moran’s I](report/a7afadb9556b61e78f14778393b1c165.png)
 _Figure 2: Spatial autocorrelation for variables measured by Moran’s_ I
 
 Unsurprisingly, each factor exhibited some degree of spatial autocorrelation (see Table 1). The greatest spatial autocorrelation was shown for measures of racial demographics, providing additional evidence for the enduring patterns of racial segregation. Interestingly, all demographic factors and most housing factors showed greater spatial autocorrelation than the measures of tree canopy. The relatively greater dissimilarity in tree canopy between neighboring areas suggests that there are more specific, localized factors affecting the gain or loss of tree cover.
@@ -82,36 +81,25 @@ With this geographically weighted regression exploration I found several local p
 
 1) In most of the city, there was a locally stronger positive relationship between heat vulnerability and canopy gain. The connection is especially strong in eastern Queens and upper Manhattan (based on local R^2 values). The strongest localized effects are the south Bronx, where canopy gain is most positively correlated with Heat Vulnerability Index, and in lower Manhattan, where the relationship is reversed. South Bronx residents have the highest heat vulnerability in the city, and this neighborhood saw one of the largest gains in tree canopy. Lower Manhattan’s wealthy residents have low heat vulnerability, but this neighborhood also gained substantial tree cover (on a percentage basis). (see figure 3)
 
-
-![1816c4e4bff08898f5d89210dfb166a7.png](1816c4e4bff08898f5d89210dfb166a7.png)
-
+![tree canopy ~ heat vulnerability](report/1816c4e4bff08898f5d89210dfb166a7.png)
 _Figure 3: (i) Local coefficient for tree canopy gain based on heat vulnerability, (ii) tree canopy gain (percentage), standardized, (iii) Heat Vulnerability Index (higher values equal indicate higher vulnerability)._ 
 
 2) In Williamsburg, Bushwick, and the middle west side of Manhattan, canopy gain is more positively associated with the portion of the population that has moved in since 2005. Although these areas have all seen much new construction over the past decade, they generally show above-average percentage canopy gain (see Figure 4). The locally positive relationship could indicate that more tree cover is added in gentrifying areas, or indicate that as areas are converted from industrial to residential zones, tree canopy is expanded.
-![a204576a3ac20080dc0bd09217425f8b.png](a204576a3ac20080dc0bd09217425f8b.png)
-
+![a204576a3ac20080dc0bd09217425f8b.png](report/a204576a3ac20080dc0bd09217425f8b.png)
 _Figure 4: (i) local relationship between canopy gain (as percent of 2010 canopy) and percent of households that moved in to their residence since 2005. (ii) local R^2 value of GWR model, (iii) canopy gain (percent), (iv) moved in since 2005 (percent of households). Scales on (i), (iii), and (iv) are standard deviations from the mean variable value._
 
 3) The portion of rent-burdened households is a negative indicator of tree canopy gain in the southern half of Manhattan, but this appears to be because there are actually a smaller portion of rent-burdened households in these high-cost areas, and larger-than-average percentage gains in tree cover (see Figure 5). (The local R^2 also shows a not-particularly-good fit between these variables in this outlier area.)
-
-![ce592d038710e577d9980c6831103568.png](ce592d038710e577d9980c6831103568.png)
-
+![canopy gain ~ rent burden](report/ce592d038710e577d9980c6831103568.png)
 _Figure 5: (i) local relationship between canopy gain (as percent of 2010 canopy) and percent of households that are rent burdened (paying more that 35 percent of income on rent). (ii) local R^2 value of GWR model, (iii) canopy gain (percent), (iv) rent burdened (percent of households). Scales on (i), (iii), and (iv) are standard deviations from the mean variable value._
 
 4) Property values from 2010 are more correlated with tree canopy gain in the eastern Bronx, and southeast Brooklyn and Queens (all areas that are also at greater heat vulnerability). These areas have lower property values and lower canopy gain. An area near East New York has a locally opposite pattern, with low property prices but much-greater-than-average canopy gain. These patterns were more apparent at a bandwidth of 100 nearest neighbors, which smooths other anomalous areas. (see Figure 6).
 
-![525d50d15b10e1b2a20909d2bd682f3a.png](525d50d15b10e1b2a20909d2bd682f3a.png)
-
+![canoy gain ~ home value](report/525d50d15b10e1b2a20909d2bd682f3a.png)
 _Figure 6: (i) local relationship between canopy gain (as percent of 2010 canopy) and home value. (ii) local R^2 value of GWR model, (iii) canopy gain (percent), (iv) median home value. Scales on (i), (iii), and (iv) are standard deviations from the mean variable value. Bandwidth = 100 nearest neighbors._
 
 Staten Island shows the opposite pattern, with property values serving as a locally negative indicator of canopy gain. Although Staten Island’s more expensive properties are in leafier areas, the net change in canopy area is also especially correlated with home value on the Island, in contrast to other outlying areas in northeastern and southern Queens where higher home prices indicate net canopy loss. (see Figure 7). (Separate tests for correlation between the portion of single family homes and tree canopy did not show consistent patterns.) It should also be noted that many tracts, particularly in core areas, are missing data on home prices, which may skew this observation.
 
-
-
-
-
-![396165f2ff366cc44a5b5b7d4bde3aff.png](396165f2ff366cc44a5b5b7d4bde3aff.png)
-
+![canopy change ~ home value](report/396165f2ff366cc44a5b5b7d4bde3aff.png)
 _Figure 7: (i) local relationship between net canopy change and home value. (ii) local R^2 value of GWR model, (iii) net canopy change, (iv) median home value. Scales on (i), (iii), and (iv) are standard deviations from the mean variable value. Bandwidth = 100 nearest neighbors. _
 
 
@@ -127,8 +115,7 @@ I repeated the geographically-weighted regression process to test the local patt
 
 The most interesting finding is that canopy connectedness is most strongly associated with new construction in lower Manhattan (specifically, right around NYU). This area has more residents in new buildings and also has seen the tree canopy become more fragmented than elsewhere in Manhattan (see figure 8).
 
-![a24ab2b7efcb4841eb5df62c696d3d75.png](a24ab2b7efcb4841eb5df62c696d3d75.png)
-
+![connectedness ~ buildings since 2000](report/a24ab2b7efcb4841eb5df62c696d3d75.png)
 _Figure 8: (i) local relationship between change in tree canopy connectedness (fractal dimension) and portion of households in buildings built since 2000 . (ii) local R^2 value of GWR model, (iii) change in tree canopy connectedness (fractal dimension) (iv) portion of households in buildings built since 2000. Scales on (i), (iii), and (iv) are standard deviations from the mean variable value._
 
 ## Conclusions and opportunities for further research
