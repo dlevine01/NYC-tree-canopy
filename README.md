@@ -1,3 +1,5 @@
+![sample map](report/1816c4e4bff08898f5d89210dfb166a7.png)
+
 # Is the change in tree canopy cover equitable in climate-changing New York City?: Exploring the data
 
 ### Extreme heat is a growing and unequal threat
